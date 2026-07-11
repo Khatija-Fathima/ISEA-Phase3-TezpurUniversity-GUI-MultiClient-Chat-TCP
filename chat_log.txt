@@ -1,0 +1,51 @@
+21:08:53,muskan,hello from muskan
+21:09:43,sowmya,good evening everyone
+21:10:14,sreekari,ISEA ASSIGNMENT 4 COMPLETED
+17:20:17,muskan,HELLO EVERYONE
+17:20:33,sowmya,Good Morning
+17:21:06,sreekari,ISEA ASSIGNMENT 4 COMPLETED!
+18:31:46,muskan,hello
+18:31:53,sowmya,hi
+18:32:15,sreekari,ISEA Internship
+18:32:33,muskan,how are you
+18:32:46,sowmya,Testing TCP
+18:33:07,sreekari,NETWORK SECURITY
+18:33:18,muskan,PYTHON SOCKET
+18:34:10,muskan,HOW ARE YOU ALL
+18:34:17,sowmya,I AM FINE 
+18:34:24,sreekari,I AM FINE TOO
+18:34:37,muskan,GOOD EVENING
+18:34:46,sowmya,good evening all
+18:35:02,sreekari,good evening everyone
+18:35:28,muskan,we are testing the TCP
+18:35:34,sowmya,OKAY
+18:35:38,sreekari,OK
+18:35:57,muskan,CHECKING THE NETWORK SECURITY
+18:36:07,sowmya,CHECKED
+18:36:11,sreekari,CHECKED
+18:36:23,muskan,USING PYTHON
+18:36:34,sowmya,YES
+18:36:40,sreekari,YEAH
+19:26:24,MUSKAN,HELLO CHAT
+19:45:42,MUSKAN,this is a chat message
+19:46:23,MUSKAN,CHAT MESSAGE
+19:53:11,MUSKAN,this is a chat message
+19:53:21,MUSKAN,this is test chat
+19:53:26,MUSKAN,TESTING
+20:00:13,MUSKAN,HELLO
+20:00:26,SOWMYA,Good Morning
+20:00:35,SREEKARI,hi everyone
+21:28:49,MUSKAN,HELLO
+21:29:01,SOWMYA,THIS IS TEASTING CHAT 
+21:29:10,SREEKARI,TEST GOING ON
+21:29:40,MUSKAN,HELLO CHAT
+00:02:18,MUSKAN,Hello everyone
+00:03:14,MUSKAN,/list
+00:03:50,MUSKAN,/msg SOWMYA Hi Sowmya
+00:04:31,SREEKARI,/all Good Evening Everyone
+00:05:01,MUSKAN,/group create CSE
+22:14:18,MUSKAN,/group create CSE
+22:16:10,MUSKAN,/group join CSE
+22:16:16,SOWMYA,/group join CSE
+22:16:21,SREEKARI,/group join CSE
+22:17:20,MUSKAN,/group CSE Welcome to Assignment 5

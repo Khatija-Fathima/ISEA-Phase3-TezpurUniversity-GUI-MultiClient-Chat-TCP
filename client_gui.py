@@ -1,0 +1,204 @@
+import tkinter as tk
+from tkinter import messagebox
+import socket
+import time
+import math
+
+PORT = 5000
+
+BG       = "#050510"
+PANEL    = "#0A0A1F"
+CARD     = "#0D0D24"
+GLOW     = "#00D4FF"
+PURPLE   = "#8B5CF6"
+TEXT     = "#E8F0FF"
+MUTED    = "#3A4060"
+SUCCESS  = "#22C55E"
+INPUT_BG = "#07071A"
+
+
+class LoginWindow:
+    def __init__(self):
+        self.root = tk.Tk()
+        self.root.title("SentinelChat")
+        self.root.geometry("520x640")
+        self.root.configure(bg=BG)
+        self.root.resizable(False, False)
+
+        self._phase = 0.0
+        self._build()
+        self._animate()
+        self.root.mainloop()
+
+    def _build(self):
+        # ── Top gradient bar ──
+        bar_frame = tk.Frame(self.root, height=3, bg=BG)
+        bar_frame.pack(fill="x")
+        self._top_canvas = tk.Canvas(bar_frame, height=3, bg=BG,
+                                      highlightthickness=0)
+        self._top_canvas.pack(fill="x")
+
+        # ── Logo ──
+        logo = tk.Frame(self.root, bg=BG)
+        logo.pack(pady=(36, 0))
+
+        # Diamond logo using canvas
+        c = tk.Canvas(logo, width=60, height=60, bg=BG,
+                       highlightthickness=0)
+        c.pack()
+        # Draw diamond shape
+        pts = [30, 4, 56, 30, 30, 56, 4, 30]
+        c.create_polygon(pts, outline=GLOW, fill="", width=2)
+        c.create_polygon(pts, outline=PURPLE, fill="", width=1,
+                         dash=(4, 4))
+        c.create_oval(22, 22, 38, 38, outline=GLOW, fill=BG, width=1)
+        self._logo_canvas = c
+
+        tk.Label(logo, text="SENTINEL CHAT",
+                 font=("Segoe UI", 22, "bold"), fg=TEXT, bg=BG).pack(pady=(10, 0))
+
+        tk.Label(logo, text="SECURE  ·  ENCRYPTED  ·  REAL-TIME",
+                 font=("Segoe UI", 8), fg=MUTED, bg=BG).pack(pady=(4, 0))
+
+        # ── Card ──
+        # Purple outer border
+        outer = tk.Frame(self.root, bg=PURPLE, padx=1, pady=1)
+        outer.pack(padx=40, pady=24, fill="x")
+
+        # Cyan inner border
+        inner_border = tk.Frame(outer, bg=GLOW, padx=1, pady=1)
+        inner_border.pack(fill="x")
+
+        card = tk.Frame(inner_border, bg=CARD)
+        card.pack(fill="x")
+
+        form = tk.Frame(card, bg=CARD)
+        form.pack(padx=28, pady=28, fill="x")
+
+        # SERVER IP
+        tk.Label(form, text="SERVER IP",
+                 font=("Segoe UI", 8, "bold"), fg=MUTED, bg=CARD).pack(anchor="w")
+
+        self._ip_border = tk.Frame(form, bg=MUTED, padx=1, pady=1)
+        self._ip_border.pack(fill="x", pady=(4, 16))
+
+        self.server_ip = tk.Entry(self._ip_border,
+            font=("Segoe UI Mono", 11), bg=INPUT_BG, fg=GLOW,
+            insertbackground=GLOW, relief="flat", bd=0)
+        self.server_ip.pack(fill="x", ipady=9, padx=2, pady=1)
+        self.server_ip.insert(0, "10.0.0.1")
+        self.server_ip.bind("<FocusIn>",  lambda e: self._ip_border.config(bg=GLOW))
+        self.server_ip.bind("<FocusOut>", lambda e: self._ip_border.config(bg=MUTED))
+
+        # USERNAME
+        tk.Label(form, text="USERNAME",
+                 font=("Segoe UI", 8, "bold"), fg=MUTED, bg=CARD).pack(anchor="w")
+
+        self._user_border = tk.Frame(form, bg=MUTED, padx=1, pady=1)
+        self._user_border.pack(fill="x", pady=(4, 0))
+
+        self.username = tk.Entry(self._user_border,
+            font=("Segoe UI", 11), bg=INPUT_BG, fg=TEXT,
+            insertbackground=GLOW, relief="flat", bd=0)
+        self.username.pack(fill="x", ipady=9, padx=2, pady=1)
+        self.username.bind("<Return>",   lambda e: self._connect())
+        self.username.bind("<FocusIn>",  lambda e: self._user_border.config(bg=PURPLE))
+        self.username.bind("<FocusOut>", lambda e: self._user_border.config(bg=MUTED))
+
+        # Status
+        status_row = tk.Frame(form, bg=CARD)
+        status_row.pack(fill="x", pady=(18, 0))
+
+        self.status_dot = tk.Label(status_row, text="●",
+                                    font=("Segoe UI", 10), fg=DANGER, bg=CARD)
+        self.status_dot.pack(side="left")
+        self.status_lbl = tk.Label(status_row, text="  Not connected",
+                                    font=("Segoe UI", 9), fg=MUTED, bg=CARD)
+        self.status_lbl.pack(side="left")
+
+        # ── Connect button ──
+        self.btn = tk.Button(self.root,
+            text="CONNECT  ▶",
+            font=("Segoe UI", 12, "bold"),
+            bg=GLOW, fg="#000000",
+            activebackground=PURPLE, activeforeground=TEXT,
+            relief="flat", cursor="hand2", bd=0, pady=13,
+            command=self._connect)
+        self.btn.pack(padx=40, fill="x")
+        self.btn.bind("<Enter>", lambda e: self.btn.config(bg=PURPLE, fg=TEXT))
+        self.btn.bind("<Leave>", lambda e: self.btn.config(bg=GLOW, fg="#000000"))
+
+        # Footer
+        tk.Label(self.root,
+                 text="ISEA Summer Internship 2026  ·  SentinelChat v2.0",
+                 font=("Segoe UI", 8), fg=MUTED, bg=BG).pack(side="bottom", pady=12)
+
+    def _animate(self):
+        """Pulse the top bar and logo canvas with cyan↔purple gradient."""
+        self._phase = (self._phase + 0.04) % (2 * math.pi)
+        t = (math.sin(self._phase) + 1) / 2  # 0..1
+
+        # Interpolate cyan <-> purple
+        def lerp(a, b, t):
+            return int(a + (b - a) * t)
+
+        rc, gc, bc = 0x00, 0xD4, 0xFF    # cyan
+        rp, gp, bp = 0x8B, 0x5C, 0xF6   # purple
+        r = lerp(rc, rp, t)
+        g = lerp(gc, gp, t)
+        b = lerp(bc, bp, t)
+        color = f"#{r:02x}{g:02x}{b:02x}"
+
+        # Update top bar
+        w = self.root.winfo_width()
+        self._top_canvas.config(bg=color, width=w)
+
+        # Pulse logo outline
+        try:
+            self._logo_canvas.itemconfig(1, outline=color)
+        except Exception:
+            pass
+
+        self.root.after(40, self._animate)
+
+    def _connect(self):
+        ip   = self.server_ip.get().strip()
+        user = self.username.get().strip()
+
+        if not ip:
+            messagebox.showerror("Error", "Enter server IP.")
+            return
+        if not user:
+            messagebox.showerror("Error", "Enter a username.")
+            return
+
+        self.btn.config(text="CONNECTING...", state="disabled", bg=MUTED, fg=TEXT)
+        self.root.update()
+
+        try:
+            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            sock.settimeout(5)
+            sock.connect((ip, PORT))
+            sock.settimeout(None)
+            sock.send(user.encode())
+
+            self.status_dot.config(fg=SUCCESS)
+            self.status_lbl.config(text="  Connected!", fg=SUCCESS)
+            self.root.update()
+            self.root.after(500, lambda: self._open_dashboard(user, sock))
+
+        except Exception as e:
+            self.btn.config(text="CONNECT  ▶", state="normal", bg=GLOW, fg="#000000")
+            self.status_dot.config(fg="#EF4444")
+            self.status_lbl.config(text=f"  Failed — {e}", fg="#EF4444")
+
+    def _open_dashboard(self, user, sock):
+        self.root.destroy()
+        from dashboard import Dashboard
+        Dashboard(user, sock)
+
+
+DANGER = "#EF4444"
+
+if __name__ == "__main__":
+    LoginWindow()
