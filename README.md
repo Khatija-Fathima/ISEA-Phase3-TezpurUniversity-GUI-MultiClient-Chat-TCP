@@ -99,7 +99,8 @@ python3 client_gui.py
 
 ## Screenshots
 
-Screenshots are in the `screenshots/` folder covering:
+All GUI screenshots are available in the `GUI_SCREENSHOTS` folder.
+
 - Login window
 - Dashboard
 - Broadcast messaging
@@ -108,3 +109,73 @@ Screenshots are in the `screenshots/` folder covering:
 - Chat history
 - Server status
 - Disconnect dialog
+
+Screenshots are in the `screenshots/` folder covering:
+
+Network Topology
+
+
+Mininet Topology
+
+
+PingAll Test
+
+
+Network Topology Verification
+
+
+Host Configuration
+Host h1
+
+
+Host h2
+
+
+Host h3
+
+
+Host h4
+
+
+Node Configuration
+Node h1
+
+
+Node h2
+
+
+Node h3
+
+
+Node h4
+
+
+Multiple Clients Connected
+
+
+Chat Communication
+
+
+Broadcast Message
+
+
+Chat Log
+
+
+Connection Closed
+
+
+TCP Handshake Analysis
+
+
+Wireshark Packet Capture
+
+
+## Graphs
+The Graphs folder contains:
+
+Performance Graphs :
+
+clients_vs_delay.png
+clients_vs_throughput.png
+message_type_distribution.png
