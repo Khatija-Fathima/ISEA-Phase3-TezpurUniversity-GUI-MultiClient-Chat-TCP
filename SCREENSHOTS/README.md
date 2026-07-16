@@ -1,3 +1,10 @@
+<img width="1917" height="1020" alt="whireshark groupchat" src="https://github.com/user-attachments/assets/695d41a7-4cb5-4f20-b0c7-3a0baa1352fa" />
+<img width="1917" height="1035" alt="whireshark private" src="https://github.com/user-attachments/assets/2caf5625-92d4-484d-8e51-4afb1f94ebe5" />
+<img width="1917" height="1027" alt="whireshark Successful Login" src="https://github.com/user-attachments/assets/e1c3fd78-5670-48a5-9a6c-1af951d7d70a" />
+<img width="1917" height="1032" alt="Wireshark Failed Login" src="https://github.com/user-attachments/assets/99a478a6-e6ad-441f-9559-a55f378190b9" />
+<img width="1452" height="1020" alt="wireshark_capture" src="https://github.com/user-attachments/assets/dc561dfe-a591-4b88-9501-a03a9012e431" />
+<img width="1917" height="1026" alt="whireshark disconnect" src="https://github.com/user-attachments/assets/c843cda8-28fd-4192-b566-da8fba3379c8" />
+<img width="1917" height="1022" alt="whireshark Broadcast" src="https://github.com/user-attachments/assets/db4569b4-5555-458a-805b-dadce8aaecaa" />
 
 
 <img width="1917" height="1077" alt="TCP_HA~1" src="https://github.com/user-attachments/assets/43d04cd3-b9e4-4ba3-8cb7-483441f9c3af" />
