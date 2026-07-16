@@ -1,181 +1,170 @@
 # ISEA-Phase3-TezpurUniversity
 
-## SentinelChat — GUI-Based Multi-Client Chat Application Using TCP
+# SentinelChat  – Secure GUI-Based Multi-Client TCP Chat Application
 
-**Submitted by:** Khatija Fathima
-**Roll No.:** 323506402225
-**Institution:** Andhra University (B.Tech CSE - Cybersecurity)
+**Submitted by:** Khatija Fathima  
+**Roll No.:** 323506402225  
+**Institution:** Andhra University (B.Tech CSE - Cybersecurity)  
 **Internship:** ISEA Summer Internship 2026, Tezpur University
 
 ---
 
-## Project Title
-SentinelChat v2.0 — GUI-Based Multi-Client TCP Chat Application
+# Project Overview
 
-## Objective
-Convert the terminal-based TCP chat application from Assignment 5 into a polished graphical desktop application using Python Tkinter, while reusing the existing server and socket communication logic unchanged.
+SentinelChat is a Secure Multi-Client TCP Chat Application developed using Python Socket Programming and Tkinter GUI.
 
-## Software Requirements
-- Python 3.8+
-- tkinter (built-in, no install needed)
-- socket (built-in)
-- threading (built-in)
-- No external pip packages required
+This project was initially developed as a GUI-based chat application and later enhanced in **Assignment 7** by implementing multiple security mechanisms including secure authentication, password hashing, duplicate login prevention, session timeout, account lockout, secure logging, and network packet analysis using Wireshark.
 
-## Network Topology
+---
 
-```
-h1 = Chat Server  →  runs server.py
-h2 = Client A     →  runs client_gui.py
-h3 = Client B     →  runs client_gui.py
-h4 = Client C     →  runs client_gui.py
-h5 = Client D     →  runs client_gui.py
+# Assignment 7 Security Features
 
-All connected through switch s1
-```
+- Secure User Authentication
+- SHA-256 Password Hashing
+- Duplicate Login Prevention
+- Account Lock after 5 Failed Login Attempts
+- Countdown Timer During Account Lock
+- Show / Hide Password
+- Session Timeout after 3 Minutes of Inactivity
+- Secure Event Logging
+- Input Validation
+- Wireshark TCP Packet Verification
 
-Mininet command:
-```
-sudo mn --topo single,5
-```
+---
 
-## Execution Steps
+# Existing Chat Features
 
-```bash
-# Step 1 — Start the server on h1
-python3 server.py
+- Multi-Client TCP Communication
+- Broadcast Messaging
+- Private Chat
+- Group Chat
+- Chat History Viewer
+- Server Status Dashboard
+- Online User List
+- Modern Tkinter GUI
 
-# Step 2 — Start the GUI client on h2, h3, h4, h5
-python3 client_gui.py
+---
 
-# Step 3 — In the login window:
-#   Enter Server IP: 10.0.0.1
-#   Enter Username: (your name)
-#   Click CONNECT
-```
+# Technologies Used
 
-## Features
+- Python 3
+- TCP Socket Programming
+- Tkinter
+- Threading
+- JSON
+- CSV
+- hashlib (SHA-256)
+- Wireshark
 
-| Feature | How to Use |
-|---------|-----------|
-| Login | Enter server IP + username, click CONNECT |
-| Dashboard | Click any card to open that feature |
-| Broadcast | Type message, click SEND BROADCAST — goes to all users |
-| Private Chat | Select user from list, type message, click SEND |
-| Group Chat | Click Create Group or Join Group, then send messages |
-| Chat History | Search and filter all past messages |
-| Server Status | Live message counts, CPU/MEM bars, activity log |
-| Disconnect | Click Disconnect card on dashboard |
+---
 
-## File Structure
+# Project Structure
 
 ```
-├── server.py           — TCP server (reused from Assignment 5, unchanged)
-├── client_gui.py       — Login window
-├── dashboard.py        — Main dashboard with animated cards
-├── broadcast.py        — Broadcast messaging window
-├── private_chat.py     — Private one-to-one chat with bubbles
-├── group_chat.py       — Group chat with create/join
-├── history.py          — Chat history viewer with search
-├── status.py           — Server analytics dashboard
-├── cyber_bg.py         — Animated particle background
-├── ui_fx.py            — Shared animation helpers (GlowPulse, bubbles)
-├── client.py           — Original terminal client (kept for testing)
-├── chat_history.csv    — Persisted message log
-├── performance_results.csv — Performance experiment data
-├── screenshots/        — All GUI screenshots
-└── report.pdf          — Full assignment report
+server.py                TCP Server
+client_gui.py            Secure Login Window
+dashboard.py             Main Dashboard
+broadcast.py             Broadcast Messaging
+private_chat.py          Private Chat Module
+group_chat.py            Group Chat Module
+history.py               Chat History
+status.py                Server Status Dashboard
+cyber_bg.py              Animated Background
+ui_fx.py                 GUI Effects
+users.json               User Credentials
+chat_history.csv         Chat History
+security_log.txt         Security Events
+Assignment7_Report.pdf   Project Report
+Assignment7_Wireshark.pcapng  Wireshark Capture
+GUI_SCREENSHOTS/         GUI Images
+SCREENSHOTS/             Network Images
+Graphs/                  Performance Graphs
 ```
 
-## Implementation Notes
+---
 
-- **server.py is 100% unchanged** from Assignment 5
-- All TCP commands are the same: `/msg`, `/all`, `/list`, `/group create`, `/group join`
-- Background thread handles `client.recv()` — GUI never blocks
-- `root.after(0, callback, msg)` used to safely update GUI from receive thread
-- Animations use `Canvas` widgets + `root.after(30)` loops (~30fps)
-- `GlowPulse` class in `ui_fx.py` provides breathing border effects
-- Chat bubbles use `tk.Text` tag_config with `lmargin`/`rmargin` — no Canvas needed
+# Security Implementation
 
-## Screenshots
+### Authentication
 
-All GUI screenshots are available in the `GUI_SCREENSHOTS` folder.
+- Username and Password Verification
+- SHA-256 Password Storage
+- Duplicate Login Detection
 
-- Login window
-- Dashboard
-- Broadcast messaging
-- Private chat (two users)
-- Group chat (four users)
-- Chat history
-- Server status
-- Disconnect dialog
+### Account Protection
 
-Screenshots are in the `screenshots/` folder covering:
+- Maximum 5 Login Attempts
+- Automatic Account Lock
+- Live Countdown Timer
 
-Network Topology
+### Session Management
 
+- Automatic Logout after 3 Minutes of Inactivity
 
-Mininet Topology
+### Logging
 
+Security events recorded include:
 
-PingAll Test
+- Successful Login
+- Failed Login
+- Duplicate Login Attempts
+- Account Lock
+- Session Timeout
+- User Logout
 
+---
 
-Network Topology Verification
+# Network Verification
 
+The application traffic was verified using **Wireshark**.
 
-Host Configuration
-Host h1
+Verified TCP Operations:
 
+- TCP Three-Way Handshake
+- Authentication Packets
+- Broadcast Communication
+- Private Chat
+- Group Chat
+- Session Termination
 
-Host h2
+---
 
+# Performance Testing
 
-Host h3
+Tested with multiple simultaneous clients.
 
+Performance graphs include:
 
-Host h4
+- Clients vs Delay
+- Clients vs Throughput
+- Message Type Distribution
 
+---
 
-Node Configuration
-Node h1
+# Assignment Deliverables
 
+- Complete Python Source Code
+- Secure GUI Application
+- Assignment Report
+- Wireshark Packet Capture
+- GUI Screenshots
+- Network Screenshots
+- Performance Graphs
 
-Node h2
+---
 
+# Developed During
 
-Node h3
+ISEA Summer Internship 2026
 
+Tezpur University
 
-Node h4
+---
 
+## Author
 
-Multiple Clients Connected
+**Khatija Fathima**
 
+B.Tech Computer Science & Engineering (Cybersecurity)
 
-Chat Communication
-
-
-Broadcast Message
-
-
-Chat Log
-
-
-Connection Closed
-
-
-TCP Handshake Analysis
-
-
-Wireshark Packet Capture
-
-
-## Graphs
-The Graphs folder contains:
-
-Performance Graphs :
-
-clients_vs_delay.png
-clients_vs_throughput.png
-message_type_distribution.png
+Andhra University
