@@ -137,7 +137,9 @@ class History:
 
         try:
             with open(HISTORY_FILE, "r", encoding="utf-8") as f:
-                reader = csv.DictReader(f)
+                reader = csv.DictReader(
+                    line for line in f if line.strip()
+                )
                 for row in reader:
                     clean = {}
                     for k, v in row.items():

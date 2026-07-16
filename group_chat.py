@@ -43,8 +43,11 @@ class GroupChat:
         self._welcome_state()
 
         if self.client:
-            threading.Thread(target=self._receive_loop, daemon=True).start()
-
+            threading.Thread(
+                target=self._receive_loop,
+                daemon=True
+            ).start()
+            
     # ──────────────────────────────────────────────────────────
     def _build(self):
 

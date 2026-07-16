@@ -2,6 +2,8 @@ import tkinter as tk
 from tkinter import messagebox
 import time
 import math
+import threading
+import socket
 
 # ── TRUE CYBER PALETTE ────────────────────────────────────────
 BG       = "#050510"   # true black-blue
@@ -37,6 +39,12 @@ class Dashboard:
         self._build()
         self._clock_tick()
         self._heartbeat()
+
+        if self.client:
+            threading.Thread(
+                target=self._receive_loop,
+                daemon=True
+            ).start()
 
         self.root.protocol("WM_DELETE_WINDOW", self._exit)
         self.root.mainloop()
@@ -329,6 +337,32 @@ class Dashboard:
             Status(self.username, self.client)
         except Exception as e:
             messagebox.showerror("Error", str(e))
+
+    def _receive_loop(self):
+        while True:
+            try:
+                message = self.client.recv(1024).decode()
+                if message == "SESSION_TIMEOUT":
+                    self.root.after(0, self._session_expired)
+                    break
+            except:
+                break
+
+    def _session_expired(self):
+        messagebox.showwarning(
+            "Session Expired",
+            "Your session expired due to inactivity."
+        )
+
+        try:
+            self.client.close()
+        except:
+            pass
+
+        self.root.destroy()
+
+        from client_gui import LoginWindow
+        LoginWindow()
 
     def _exit(self):
         if messagebox.askyesno("Disconnect", "Sign out and close SentinelChat?"):

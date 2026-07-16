@@ -43,8 +43,12 @@ class PrivateChat:
         self._welcome_state()
 
         if self.client:
-            threading.Thread(target=self._receive_loop, daemon=True).start()
-            self.root.after(400, self._refresh_users)
+            threading.Thread(
+                target=self._receive_loop,
+                daemon=True
+            ).start()
+
+        self.root.after(400, self._refresh_users)
 
     # ──────────────────────────────────────────────────────────
     def _build(self):

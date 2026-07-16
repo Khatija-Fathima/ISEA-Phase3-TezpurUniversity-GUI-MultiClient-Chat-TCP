@@ -8,7 +8,7 @@ BG        = "#07111F"
 PANEL     = "#0F1A30"
 CARD      = "#16233A"
 CARD2     = "#1A2940"
-TITLE     = "#00D4FF"
+TITLE     = "#112125"
 PURPLE    = "#8B5CF6"
 TEXT      = "#F8FAFC"
 SECONDARY = "#94A3B8"
@@ -166,7 +166,9 @@ class Status:
         if os.path.exists(HISTORY_FILE):
             try:
                 with open(HISTORY_FILE, "r", encoding="utf-8") as f:
-                    reader = csv.DictReader(f)
+                    reader = csv.DictReader(
+                        line for line in f if line.strip()
+                    )
                     for row in reader:
                         total += 1
                         mtype = row.get("message_type", "")
@@ -176,7 +178,6 @@ class Status:
                             broadcast += 1
             except Exception:
                 pass
-
         self.stat_frames["users"].config(text=str(random.randint(1, 6)))
         self.stat_frames["msgs"].config(text=str(total))
         self.stat_frames["broadcasts"].config(text=str(broadcast))
@@ -213,7 +214,9 @@ class Status:
         rows = []
         try:
             with open(HISTORY_FILE, "r", encoding="utf-8") as f:
-                reader = csv.DictReader(f)
+                reader = csv.DictReader(
+                    line for line in f if line.strip()
+                )
                 rows = list(reader)
         except Exception:
             pass
