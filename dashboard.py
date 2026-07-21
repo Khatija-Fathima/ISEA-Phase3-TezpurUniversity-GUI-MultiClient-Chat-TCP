@@ -20,9 +20,12 @@ DANGER   = "#EF4444"
 
 
 class Dashboard:
-    def __init__(self, username, client=None):
+    def __init__(self, username, client=None, server_ip=None):
         self.username = username
-        self.client   = client
+        self.client = client
+        self.server_ip = server_ip
+        self._reconnecting = False
+        self._manual_exit = False
         self._tick_on = True
         self._after_ids = []
 
@@ -40,11 +43,12 @@ class Dashboard:
         self._clock_tick()
         self._heartbeat()
 
-        if self.client:
-            threading.Thread(
-                target=self._receive_loop,
-                daemon=True
-            ).start()
+# TEMPORARILY DISABLED FOR TEST
+# if self.client:
+#     threading.Thread(
+#         target=self._receive_loop,
+#         daemon=True
+#     ).start()
 
         self.root.protocol("WM_DELETE_WINDOW", self._exit)
         self.root.mainloop()
@@ -338,16 +342,33 @@ class Dashboard:
         except Exception as e:
             messagebox.showerror("Error", str(e))
 
+    
     def _receive_loop(self):
         while True:
             try:
-                message = self.client.recv(1024).decode()
+                message = self.client.recv(4096).decode()
+
+                if not message:
+                    break
+
                 if message == "SESSION_TIMEOUT":
                     self.root.after(0, self._session_expired)
                     break
-            except:
-                break
 
+                print("RECEIVED:", message)
+
+            except Exception as e:
+                if self._manual_exit:
+                    break
+
+                print("Receive Error:", e)
+
+                self.root.after(
+                    0,
+                    self._reconnect
+                )
+
+                break
     def _session_expired(self):
         messagebox.showwarning(
             "Session Expired",
@@ -364,11 +385,92 @@ class Dashboard:
         from client_gui import LoginWindow
         LoginWindow()
 
-    def _exit(self):
-        if messagebox.askyesno("Disconnect", "Sign out and close SentinelChat?"):
+    def _reconnect(self):
+        if self._reconnecting:
+            return
+
+        self._reconnecting = True
+
+        popup = tk.Toplevel(self.root)
+        popup.title("Reconnecting")
+        popup.geometry("330x150")
+        popup.resizable(False, False)
+
+        lbl = tk.Label(
+            popup,
+            text="Connection Lost",
+            font=("Segoe UI",12,"bold")
+        )
+        lbl.pack(pady=10)
+
+        status = tk.Label(
+            popup,
+            text="",
+            font=("Segoe UI",10)
+        )
+        status.pack()
+
+        popup.update()
+
+        for attempt in range(1,4):
+            status.config(
+                text=f"Attempt {attempt} of 3..."
+            )
+            popup.update()
+
             try:
-                if self.client: self.client.close()
-            except: pass
+                sock = socket.socket(
+                    socket.AF_INET,
+                    socket.SOCK_STREAM
+                )
+                sock.settimeout(3)
+                sock.connect(
+                    (self.server_ip,5000)
+                )
+                sock.close()
+
+                popup.destroy()
+
+                messagebox.showinfo(
+                    "Connection Restored",
+                    "Server is available again.\nPlease login."
+                )
+
+                self.root.destroy()
+
+                from client_gui import LoginWindow
+                LoginWindow()
+                return
+
+            except:
+                time.sleep(2)
+
+        popup.destroy()
+
+        messagebox.showerror(
+            "Reconnect Failed",
+            "Unable to reconnect.\nPlease login again."
+        )
+
+        self.root.destroy()
+
+        from client_gui import LoginWindow
+        LoginWindow()
+
+    def _exit(self):
+        if messagebox.askyesno(
+            "Disconnect",
+            "Sign out and close SentinelChat?"
+        ):
+
+            self._manual_exit = True
+
+            try:
+                if self.client:
+                    self.client.close()
+            except:
+                pass
+
             self.root.destroy()
 
 

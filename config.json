@@ -1,0 +1,9 @@
+{
+    "SERVER_HOST": "127.0.0.1",
+    "SERVER_PORT": 5000,
+    "BUFFER_SIZE": 4096,
+    "SESSION_TIMEOUT": 180,
+    "MAX_LOGIN_ATTEMPTS": 5,
+    "LOCK_TIME": 300,
+    "MAX_CLIENTS": 20
+}

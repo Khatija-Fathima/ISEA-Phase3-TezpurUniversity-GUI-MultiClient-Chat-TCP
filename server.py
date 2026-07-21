@@ -6,15 +6,28 @@ import hashlib
 from datetime import datetime, timedelta
 import time
 
-last_activity = time.time()
-SESSION_TIMEOUT = 180   # 3 minutes
 
-HOST = "0.0.0.0"
-PORT = 5000
+
+with open("config.json", "r") as file:
+    config = json.load(file)
+
+HOST = config["SERVER_HOST"]
+PORT = config["SERVER_PORT"]
+BUFFER_SIZE = config["BUFFER_SIZE"]
+SESSION_TIMEOUT = config["SESSION_TIMEOUT"]
+MAX_LOGIN_ATTEMPTS = config["MAX_LOGIN_ATTEMPTS"]
+LOCK_TIME = config["LOCK_TIME"]
+MAX_CLIENTS = config["MAX_CLIENTS"]
+
+
+last_activity = time.time()
+
 
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+
 server.bind((HOST, PORT))
-server.listen()
+server.listen(MAX_CLIENTS)
 
 clients = []
 usernames = {}
@@ -27,6 +40,8 @@ blocked_users = {}
 client_info = {}
 
 groups = {}
+
+clients_lock = threading.Lock()
 
 private_message_count = 0
 broadcast_message_count = 0
@@ -121,14 +136,20 @@ def show_last_messages(client, username):
         
 
 def broadcast(message, sender):
-    for client in clients:
-        if client != sender:
-            try:
-                client.send(message.encode())
-            except:
-                client.close()
-                if client in clients:
-                    clients.remove(client)
+
+    with clients_lock:
+        for client in clients.copy():
+            if client != sender:
+
+                try:
+                    client.send(message.encode())
+
+                except (ConnectionResetError, BrokenPipeError, OSError):
+
+                    print(f"Broadcast failed. Cleaning up client...")
+
+                    cleanup_client(client)
+
                     
 def private_message(sender, receiver_name, message):
 
@@ -151,12 +172,16 @@ def broadcast_all(sender, message):
 
     global broadcast_message_count
 
-    for client in clients:
+    for client in clients.copy():
 
         try:
             client.send(f"[BROADCAST] {sender}: {message}".encode())
-        except:
-            pass
+
+        except (ConnectionResetError, BrokenPipeError, OSError):
+
+            print("Broadcast client disconnected.")
+
+            cleanup_client(client)
 
     broadcast_message_count += 1
 
@@ -184,12 +209,49 @@ def group_message(sender, group, message):
 
     if group in groups:
 
-        for member in groups[group]:
+        for member in groups[group].copy():
 
             try:
-                member.send(f"[GROUP {group}] {sender}: {message}".encode())
-            except:
-                pass                    
+                member.send(
+                    f"[GROUP {group}] {sender}: {message}".encode()
+                )
+
+            except (ConnectionResetError, BrokenPipeError, OSError):
+
+                print("Group member disconnected.")
+
+                cleanup_client(member) 
+
+def cleanup_client(client):
+
+    username = usernames.get(client)
+
+    try:
+        client.close()
+    except OSError:
+        pass
+
+    if client in clients:
+        clients.remove(client)
+
+    if client in usernames:
+        del usernames[client]
+
+    if username in logged_in_users:
+        logged_in_users.remove(username)
+
+    if client in client_info:
+        client_info[client]["status"] = "Offline"
+        del client_info[client]
+
+    for group in groups.values():
+        if client in group:
+            group.remove(client)
+
+    if username:
+        security_log("LOGOUT", username)
+        print(f"{username} disconnected and cleaned up.")            
+
                     
 def handle_client(client):
 
@@ -200,7 +262,9 @@ def handle_client(client):
     client.settimeout(1)
     while True:
         try:
-            message = client.recv(1024).decode()
+            message = client.recv(BUFFER_SIZE).decode()
+            print("=" * 60)
+            print(repr(message)) 
             if not message:
                 break
             last_activity = time.time()
@@ -305,21 +369,8 @@ def handle_client(client):
 
     t = datetime.now().strftime("%H:%M:%S")
     print(f"{t},DISCONNECTED,{username}")
-    security_log("LOGOUT", username)
 
-    client.close()
-
-    if client in client_info:
-       client_info[client]["status"] = "Offline"
-
-    if client in clients:
-       clients.remove(client)
-
-    if client in usernames:
-       del usernames[client]
-
-    if username in logged_in_users:
-     logged_in_users.remove(username)
+    cleanup_client(client)
 
 def receive():
 
@@ -329,7 +380,7 @@ def receive():
 
         client, address = server.accept()
 
-        login_data = client.recv(1024).decode()
+        login_data = client.recv(BUFFER_SIZE).decode()
 
         parts = login_data.split("|")
 
@@ -356,9 +407,9 @@ def receive():
         if not authenticate_user(username, password):
             security_log("LOGIN FAILED", username)
             failed_attempts[username] = failed_attempts.get(username, 0) + 1
-            if failed_attempts[username] >= 5:
+            if failed_attempts[username] >= MAX_LOGIN_ATTEMPTS:
                 security_log("ACCOUNT LOCKED", username)
-                blocked_users[username] = datetime.now() + timedelta(seconds=30)
+                blocked_users[username] = datetime.now() + timedelta(seconds=LOCK_TIME)
                 client.send("ACCOUNT_LOCKED".encode())
             else:
                 client.send("LOGIN_FAILED".encode())
@@ -392,7 +443,9 @@ def receive():
             "status": "Online"
         }
 
-        clients.append(client)
+        with clients_lock:
+            clients.append(client)
+
 
         t = datetime.now().strftime("%H:%M:%S")
         print(f"{t},CONNECTED,{username},{address[0]}")
@@ -405,7 +458,11 @@ def receive():
         print(f"Status     : {client_info[client]['status']}")
         print("=================================\n")
 
-        thread = threading.Thread(target=handle_client, args=(client,))
+        thread = threading.Thread(
+    target=handle_client,
+    args=(client,),
+    daemon=True
+)
         thread.start()
 
 def security_log(event, username):
@@ -428,4 +485,15 @@ except KeyboardInterrupt:
     print(f"Groups Created : {len(groups)}")
     print(f"Connected Clients : {len(clients)}")
     print("====================================")
-           
+
+    print("\nShutting down server...")
+
+    for client in clients.copy():
+        try:
+            client.close()
+        except OSError:
+            pass
+
+    server.close()
+
+    print("Server shutdown completed.")    
