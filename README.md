@@ -1,6 +1,11 @@
-# ISEA-Phase3-TezpurUniversity
+# SentinelChat
+### Secure GUI-Based Multi-Client TCP Chat Application
 
-# SentinelChat – Secure GUI-Based Multi-Client TCP Chat Application
+![Python](...)
+![TCP](...)
+![Tkinter](...)
+![Socket Programming](...)
+![ISEA Internship](...)
 
 **Submitted by:** Khatija Fathima  
 **Roll No.:** 323506402225  
@@ -12,6 +17,32 @@
 # Project Overview
 
 SentinelChat is a Secure GUI-Based Multi-Client TCP Chat Application developed using Python Socket Programming and Tkinter.
+
+# Application Preview
+
+Login Window Screenshot
+<img width="722" height="885" alt="login" src="https://github.com/user-attachments/assets/2d2b1195-1a20-480c-a4b3-f42900f99f55" />
+
+<img width="702" height="877" alt="LOGINS~1" src="https://github.com/user-attachments/assets/bade77ef-1eca-4b33-b09e-c50e29849276" />
+
+Dashboard Screenshot
+<img width="1912" height="1020" alt="DASHBO~1" src="https://github.com/user-attachments/assets/4cd05392-2284-4841-ac77-b6b8684f7584" />
+
+Private Chat Screenshot
+<img width="1917" height="1022" alt="PRIVAT~1" src="https://github.com/user-attachments/assets/931f88e7-b2ac-48de-94cf-3c90bd9f51ae" />
+
+<img width="1917" height="1035" alt="PRIVAT~2" src="https://github.com/user-attachments/assets/9aef7045-b147-4fd4-aec1-a7f0ce220d6f" />
+
+Group Chat Screenshot
+<img width="1195" height="902" alt="GROUP_1" src="https://github.com/user-attachments/assets/ce21c866-8749-4a0c-8f5e-2424431cc140" />
+
+<img width="1192" height="902" alt="GROUP_2" src="https://github.com/user-attachments/assets/69cd1c6e-65a9-4002-9140-165495cff320" />
+
+<img width="1912" height="1031" alt="GROUP_4" src="https://github.com/user-attachments/assets/85bd6056-7d41-4bc4-af9f-d9598d5b166f" />
+
+<img width="1917" height="1076" alt="GROUP_~1" src="https://github.com/user-attachments/assets/7faaed8e-b9b1-4ab6-863f-ad81963ef0b2" />
+
+
 
 The project was initially developed as a multi-client TCP chat application and enhanced during **Assignment 7** by implementing practical security mechanisms including secure authentication, SHA-256 password hashing, duplicate login prevention, account lockout, session timeout, secure logging, and TCP packet verification using Wireshark.
 
@@ -76,6 +107,17 @@ In **Assignment 8**, the same application was further optimized by improving con
 
 # Existing Chat Features
 
+| Feature              | Status |
+| -------------------- | ------ |
+| Login Authentication | ✅     |
+| Broadcast            | ✅     |
+| Private Chat         | ✅     |
+| Group Chat           | ✅     |
+| Online Users         | ✅     |
+| Chat History         | ✅     |
+| Session Timeout      | ✅     |
+
+
 - Multi-Client TCP Communication
 - Broadcast Messaging
 - Private Chat
@@ -84,7 +126,6 @@ In **Assignment 8**, the same application was further optimized by improving con
 - Server Status Dashboard
 - Online User List
 - Modern Tkinter GUI
-
 ---
 
 # Technologies Used
@@ -99,7 +140,38 @@ In **Assignment 8**, the same application was further optimized by improving con
 - Wireshark
 - Configurable JSON Configuration (`config.json`)
 
----
+# System Architecture
+
+Client
+
+↓
+
+Server
+
+↓
+
+Authentication
+
+↓
+
+Broadcast
+
+↓
+
+Private
+
+↓
+
+History
+
+↓
+
+CSV
+
+↓
+
+Logs
+
 
 # Project Structure
 
@@ -174,6 +246,14 @@ Verified TCP Operations:
 - Private Chat
 - Group Chat
 - Connection Termination
+<img width="1917" height="1022" alt="WHIRES~1" src="https://github.com/user-attachments/assets/72967435-fb32-4018-bb98-243df6944ad0" />
+<img width="1917" height="1026" alt="WHIRES~2" src="https://github.com/user-attachments/assets/5f95fae7-cf16-4f2f-ad79-2336aa77fcd6" />
+<img width="1917" height="1020" alt="WHIRES~3" src="https://github.com/user-attachments/assets/6819c14d-97e9-4c56-b70a-3b9f096ddc3f" />
+<img width="1917" height="1035" alt="WHIRES~4" src="https://github.com/user-attachments/assets/1cd51d96-a1d3-490a-93ef-c0f8548bc6ab" />
+<img width="1917" height="1027" alt="WHC3D5~1" src="https://github.com/user-attachments/assets/76f598ba-f691-4946-ade1-3047d38b51de" />
+<img width="1917" height="1032" alt="WIRESH~2" src="https://github.com/user-attachments/assets/7143d995-b507-4a44-918b-dd394354d2b9" />
+<img width="1452" height="1020" alt="WIRESH~1" src="https://github.com/user-attachments/assets/79e84e52-c45e-4d9e-a1fd-e7521247c8f2" />
+
 
 ---
 
@@ -195,8 +275,15 @@ Performance results were recorded in:
 Generated Graphs:
 
 - Clients vs Delay
+  <img width="600" height="400" alt="CLIENT~1" src="https://github.com/user-attachments/assets/09ba4f3b-d0e2-40ed-aa00-391f6df61ffe" />
+
 - Clients vs Throughput
+  <img width="600" height="400" alt="CLIENT~2" src="https://github.com/user-attachments/assets/b4d97add-3acf-42d8-93ce-12cd0da38fd8" />
+
+  
 - Message Type Distribution
+  <img width="600" height="400" alt="MESSAG~1" src="https://github.com/user-attachments/assets/02d396e6-3b2a-4533-9ea3-a032d1d1598f" />
+
 
 ---
 
@@ -231,6 +318,20 @@ This project provided practical experience in:
 - Wireshark Packet Inspection
 
 ---
+
+Installation
+
+git clone ...
+
+cd ...
+
+pip install ...
+
+python server.py
+
+python client_gui.py
+
+------
 
 # Developed During
 
