@@ -1,6 +1,9 @@
 # SentinelChat
 ### Secure GUI-Based Multi-Client TCP Chat Application
 
+Developed during the ISEA Summer Internship 2026
+Tezpur University
+
 ![Python](...)
 ![TCP](...)
 ![Tkinter](...)
@@ -26,27 +29,25 @@ In **Assignment 8**, the same application was further optimized by improving con
 
 # Application Preview
 
-
-Login Window Screenshot
-
+Figure 1. SentinelChat Login Window screenshots
 
 <img width="722" height="885" alt="login" src="https://github.com/user-attachments/assets/2d2b1195-1a20-480c-a4b3-f42900f99f55" />
 
 <img width="702" height="877" alt="LOGINS~1" src="https://github.com/user-attachments/assets/bade77ef-1eca-4b33-b09e-c50e29849276" />
 
-Dashboard Screenshot
+Figure 2. SentinelChat Dashboard Screenshot
 
 
 <img width="1912" height="1020" alt="DASHBO~1" src="https://github.com/user-attachments/assets/4cd05392-2284-4841-ac77-b6b8684f7584" />
 
-Private Chat Screenshot
+Figure 3. Private Chat Interface Screenshots
 
 
 <img width="1917" height="1022" alt="PRIVAT~1" src="https://github.com/user-attachments/assets/931f88e7-b2ac-48de-94cf-3c90bd9f51ae" />
 
 <img width="1917" height="1035" alt="PRIVAT~2" src="https://github.com/user-attachments/assets/9aef7045-b147-4fd4-aec1-a7f0ce220d6f" />
 
-Group Chat Screenshot
+Figure 4. Group Chat Interface Screenshots
 
 
 <img width="1195" height="902" alt="GROUP_1" src="https://github.com/user-attachments/assets/ce21c866-8749-4a0c-8f5e-2424431cc140" />
@@ -152,35 +153,28 @@ Group Chat Screenshot
 
 # System Architecture
 
-Client
+                  SentinelChat
 
-↓
+        +-------------------------+
+        |     TCP Server          |
+        +-------------------------+
+           /        |        \
+          /         |         \
+   Client 1    Client 2    Client 3
+          \         |         /
+           \        |        /
 
-Server
+      Authentication
+      Session Management
+      Broadcast Messaging
+      Private Messaging
+      Group Chat
 
-↓
+             |
 
-Authentication
-
-↓
-
-Broadcast
-
-↓
-
-Private
-
-↓
-
-History
-
-↓
-
-CSV
-
-↓
-
-Logs
+      Chat History (CSV)
+      Security Logs
+      Performance Logs
 
 
 # Project Structure
@@ -256,12 +250,11 @@ Verified TCP Operations:
 - Private Chat
 - Group Chat
 - Connection Termination
-  
+
+
 <img width="1917" height="1022" alt="WHIRES~1" src="https://github.com/user-attachments/assets/72967435-fb32-4018-bb98-243df6944ad0" />
 
-
 <img width="1917" height="1026" alt="WHIRES~2" src="https://github.com/user-attachments/assets/5f95fae7-cf16-4f2f-ad79-2336aa77fcd6" />
-
 
 <img width="1917" height="1020" alt="WHIRES~3" src="https://github.com/user-attachments/assets/6819c14d-97e9-4c56-b70a-3b9f096ddc3f" />
 
@@ -350,11 +343,9 @@ This project provided practical experience in:
 
 Installation
 
-git clone ...
+git clone https://github.com/Khatija-Fathima/ISEA-Phase3-TezpurUniversity-GUI-MultiClient-Chat-TCP.git
 
-cd ...
-
-pip install ...
+cd ISEA-Phase3-TezpurUniversity-GUI-MultiClient-Chat-TCP
 
 python server.py
 
