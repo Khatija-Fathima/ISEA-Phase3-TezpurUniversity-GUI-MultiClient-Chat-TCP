@@ -25,9 +25,10 @@ PALETTE = dict(TEXT=TEXT, MUTED=SECONDARY, SUCCESS=SUCCESS,
 
 class GroupChat:
 
-    def __init__(self, username, client=None):
+    def __init__(self, username, client=None, dashboard=None):
         self.username      = username
         self.client        = client
+        self.dashboard     = dashboard
         self.current_group = tk.StringVar(value="")
         self._running      = True
         self._pulses       = []
@@ -42,11 +43,11 @@ class GroupChat:
         self._build()
         self._welcome_state()
 
-        if self.client:
-            threading.Thread(
-                target=self._receive_loop,
-                daemon=True
-            ).start()
+#        if self.client:
+#            threading.Thread(
+#                target=self._receive_loop,
+#                daemon=True
+#            ).start()
             
     # ──────────────────────────────────────────────────────────
     def _build(self):
@@ -289,10 +290,16 @@ class GroupChat:
         except Exception as e:
             messagebox.showerror("Send Error", str(e))
 
+    def receive_message(self, msg):
+        self._handle_incoming(msg)
+
+
     def _on_close(self):
         self._running = False
         for p in self._pulses:
             p.stop()
+        if self.dashboard:
+            self.dashboard.group_chat = None
         self.root.destroy()
 
 

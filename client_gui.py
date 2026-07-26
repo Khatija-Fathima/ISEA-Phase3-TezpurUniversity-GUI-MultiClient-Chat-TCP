@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import messagebox
 import socket
 import math
+import time
 
 PORT = 5000
 
@@ -516,23 +517,59 @@ class LoginWindow:
         self.root.update()
 
         try:
+            for attempt in range(1, 4):
+                try:
+                    sock = socket.socket(
+                        socket.AF_INET,
+                        socket.SOCK_STREAM
+                    )
 
-            sock = socket.socket(
-                socket.AF_INET,
-                socket.SOCK_STREAM
-            )
+                    sock.settimeout(5)
 
-            sock.settimeout(5)
+                    sock.connect((ip, PORT))
 
-            sock.connect((ip, PORT))
+                    login_packet = f"LOGIN|{user}|{password}"
 
-            login_packet = f"LOGIN|{user}|{password}"
+                    sock.send(login_packet.encode())
 
-            sock.send(login_packet.encode())
+                    response = sock.recv(1024).decode()
 
-            response = sock.recv(1024).decode()
+                    sock.settimeout(None)
 
-            sock.settimeout(None)
+                    break
+
+                except Exception:
+                    self.status_lbl.config(
+                        text=f"  Reconnecting... ({attempt}/3)",
+                        fg="orange"
+                    )
+
+                    self.root.update()
+
+                    time.sleep(2)
+
+            else:
+
+                self.btn.config(
+                    text="CONNECT ▶",
+                    state="normal",
+                    bg=GLOW,
+                    fg="#000000"
+                )
+
+                self.status_dot.config(fg=DANGER)
+
+                self.status_lbl.config(
+                    text="  Connection Failed",
+                    fg=DANGER
+                )
+
+                messagebox.showerror(
+                    "Connection Error",
+                    "Unable to connect after 3 attempts."
+                )
+
+                return
 
             if response == "LOGIN_SUCCESS":
 
@@ -551,10 +588,10 @@ class LoginWindow:
                     500,
                     lambda: self._open_dashboard(
                         user,
-                        sock
+                        sock,
+                        ip
                     )
                 )
-
             elif response == "DUPLICATE_LOGIN":
 
                 sock.close()
@@ -638,21 +675,19 @@ class LoginWindow:
                 fg="#000000"
             )
 
-            self.status_dot.config(
-                fg=DANGER
-            )
+            self.status_dot.config(fg=DANGER)
 
             self.status_lbl.config(
-                text="  Connection Failed",
+                text="  Server Unreachable",
                 fg=DANGER
             )
 
             messagebox.showerror(
                 "Connection Error",
-                str(e)
+                f"{e}\n\nPlease verify the server is running."
             )
 
-    def _open_dashboard(self, user, sock):
+    def _open_dashboard(self, user, sock, ip):
         """
         Close the login window and open the main dashboard.
         """
@@ -661,7 +696,7 @@ class LoginWindow:
 
         from dashboard import Dashboard
 
-        Dashboard(user, sock)
+        Dashboard(user, sock, ip)
 
 
 if __name__ == "__main__":

@@ -25,9 +25,10 @@ PALETTE = dict(TEXT=TEXT, MUTED=SECONDARY, SUCCESS=SUCCESS,
 
 class PrivateChat:
 
-    def __init__(self, username, client=None):
+    def __init__(self, username, client=None, dashboard=None):
         self.username = username
         self.client   = client
+        self.dashboard = dashboard
         self.selected_user = tk.StringVar(value="")
         self._running  = True
         self._pulses   = []
@@ -42,11 +43,11 @@ class PrivateChat:
         self._build()
         self._welcome_state()
 
-        if self.client:
-            threading.Thread(
-                target=self._receive_loop,
-                daemon=True
-            ).start()
+#        if self.client:
+#            threading.Thread(
+#                target=self._receive_loop,
+#                daemon=True
+#            ).start()
 
         self.root.after(400, self._refresh_users)
 
@@ -224,13 +225,21 @@ class PrivateChat:
 
     # ──────────────────────────────────────────────────────────
     def _receive_loop(self):
+        print("PRIVATE RECEIVE THREAD STARTED")
+        
         while self._running:
             try:
                 msg = self.client.recv(4096).decode()
+
+                print("CLIENT RECEIVED:", repr(msg))
+
                 if not msg:
                     break
+
                 self.root.after(0, self._handle_incoming, msg)
-            except Exception:
+
+            except Exception as e:
+                print(e)
                 break
 
     def _handle_incoming(self, msg):
@@ -303,10 +312,16 @@ class PrivateChat:
         except Exception as e:
             messagebox.showerror("Send Error", str(e))
 
+    def receive_message(self, msg):
+     self._handle_incoming(msg)
+    
+    
     def _on_close(self):
         self._running = False
         for p in self._pulses:
             p.stop()
+        if self.dashboard:
+            self.dashboard.private_chat = None
         self.root.destroy()
 
 

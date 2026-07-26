@@ -29,6 +29,10 @@ class Dashboard:
         self._tick_on = True
         self._after_ids = []
 
+        # Window references
+        self.private_chat = None
+        self.group_chat = None
+
         self.root = tk.Tk()
         self.root.title("SentinelChat — Dashboard")
         self.root.geometry("1000x700")
@@ -43,12 +47,11 @@ class Dashboard:
         self._clock_tick()
         self._heartbeat()
 
-# TEMPORARILY DISABLED FOR TEST
-# if self.client:
-#     threading.Thread(
-#         target=self._receive_loop,
-#         daemon=True
-#     ).start()
+        if self.client:
+            threading.Thread(
+                target=self._receive_loop,
+                daemon=True
+            ).start()
 
         self.root.protocol("WM_DELETE_WINDOW", self._exit)
         self.root.mainloop()
@@ -317,14 +320,30 @@ class Dashboard:
     def _open_private(self):
         try:
             from private_chat import PrivateChat
-            PrivateChat(self.username, self.client)
+
+            if self.private_chat is None or not self.private_chat.root.winfo_exists():
+                self.private_chat = PrivateChat(
+                    self.username,
+                    self.client,
+                    self
+                )
+            else:
+                self.private_chat.root.lift()
         except Exception as e:
             messagebox.showerror("Error", str(e))
 
     def _open_group(self):
         try:
             from group_chat import GroupChat
-            GroupChat(self.username, self.client)
+
+            if self.group_chat is None or not self.group_chat.root.winfo_exists():
+                self.group_chat = GroupChat(
+                    self.username,
+                    self.client,
+                    self
+                )
+            else:
+                self.group_chat.root.lift()
         except Exception as e:
             messagebox.showerror("Error", str(e))
 
@@ -355,9 +374,14 @@ class Dashboard:
                     self.root.after(0, self._session_expired)
                     break
 
-                print("RECEIVED:", message)
+                self.root.after(
+                    0,
+                    self._dispatch_message,
+                    message
+                )
 
             except Exception as e:
+
                 if self._manual_exit:
                     break
 
@@ -367,8 +391,44 @@ class Dashboard:
                     0,
                     self._reconnect
                 )
-
                 break
+
+
+    def _dispatch_message(self, message):
+        # Private Chat
+        if message.startswith("[PRIVATE]"):
+            if self.private_chat and self.private_chat.root.winfo_exists():
+                self.private_chat.receive_message(message)
+            return
+
+        # Group Chat
+        if message.startswith("[GROUP"):
+            if self.group_chat and self.group_chat.root.winfo_exists():
+                self.group_chat.receive_message(message)
+            return
+
+        # Broadcast
+        if message.startswith("[BROADCAST]"):
+
+            if self.private_chat and self.private_chat.root.winfo_exists():
+                self.private_chat.receive_message(message)
+
+            if self.group_chat and self.group_chat.root.winfo_exists():
+                self.group_chat.receive_message(message)
+
+            return
+
+        # Online users
+        if message.startswith("Online Users:"):
+
+            if self.private_chat and self.private_chat.root.winfo_exists():
+                self.private_chat.receive_message(message)
+
+            return
+
+        # Future system messages can be handled here
+        print(message)
+    
     def _session_expired(self):
         messagebox.showwarning(
             "Session Expired",
